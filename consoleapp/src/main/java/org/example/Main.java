@@ -49,6 +49,20 @@ public class Main extends Thread{
         numbers.forEach(method);
         numbers2.forEach(method);
 
+        // tek satır => return o satırdan başka satırda olamaz.
+        printFormatted("Hello", (str) -> str + " Halit");
+
+        // multiple satır => birden fazla satır var hangisi benim return için kullanacağım değer?
+        printFormatted("Hello", (str) -> {
+            return str + " Halit";
+        });
+
+
+    }
+
+    public static void printFormatted(String str, StringFunction format){
+        String result = format.run(str);
+        System.out.println(result);
     }
 
     @Override
