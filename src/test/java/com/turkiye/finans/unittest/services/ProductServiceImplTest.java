@@ -4,12 +4,18 @@ import com.turkiye.finans.unittest.dtos.ProductDetailDto;
 import com.turkiye.finans.unittest.dtos.ProductForAddDto;
 import com.turkiye.finans.unittest.entities.Product;
 import com.turkiye.finans.unittest.repositories.ProductRepository;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.event.annotation.AfterTestClass;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +23,10 @@ class ProductServiceImplTest {
     ProductServiceImpl productService;
     @Mock
     ProductRepository productRepository;
+
+    ValidatorFactory validatorFactory;
+
+    Validator validator;
 
     @BeforeAll
     static void baseSetup(){
@@ -26,11 +36,13 @@ class ProductServiceImplTest {
     void setUp(){
         MockitoAnnotations.openMocks(this);
         productService = new ProductServiceImpl(productRepository);
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
-    @AfterAll
-    static void cleanUpAll(){
-
+    @AfterTestClass // => class işlevini yerine getirdikten sonra
+    void cleanUpAll(){
+       validatorFactory.close();
     }
 
     // teardown,cleanup
@@ -59,6 +71,8 @@ class ProductServiceImplTest {
         // Mapping Test
         ProductDetailDto response = productService.add(request);
         assert response.getId() == 1 && response.getName().equals(request.getName());
+
+        // 11:15
     }
     @Test
     void addWithSameNameShouldThrowException() {
@@ -100,5 +114,16 @@ class ProductServiceImplTest {
         assertThrows(RuntimeException.class, () -> {
             productService.add(request);
         });
+    }
+
+    @Test
+    void addWithBlankNameShouldThrowValidationException(){
+        ProductForAddDto request = ProductForAddDto.builder()
+                .name("")
+                .unitsInStock(2)
+                .unitPrice(10)
+                .build();
+        Set<ConstraintViolation<ProductForAddDto>> errors = validator.validate(request);
+        assertFalse(errors.isEmpty());
     }
 }
