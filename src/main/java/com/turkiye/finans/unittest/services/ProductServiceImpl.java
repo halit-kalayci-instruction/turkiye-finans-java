@@ -1,5 +1,6 @@
 package com.turkiye.finans.unittest.services;
 
+import com.turkiye.finans.unittest.dtos.ProductDetailDto;
 import com.turkiye.finans.unittest.dtos.ProductForAddDto;
 import com.turkiye.finans.unittest.entities.Product;
 import com.turkiye.finans.unittest.repositories.ProductRepository;
@@ -13,7 +14,7 @@ public class ProductServiceImpl implements ProductService{
 
 
     @Override
-    public void add(ProductForAddDto productForAddDto)
+    public ProductDetailDto add(ProductForAddDto productForAddDto)
     {
         // 1=> veritabanında eklenmek istenen isimde bir veri olması
         // 2=> veritabanında eklenmek istenen isimde bir veri olmaması
@@ -30,6 +31,14 @@ public class ProductServiceImpl implements ProductService{
                 .unitPrice(productForAddDto.getUnitPrice())
                 .unitsInStock(productForAddDto.getUnitsInStock())
                 .build();
-        productRepository.save(productToAdd);
+        productToAdd = productRepository.save(productToAdd);
+
+        ProductDetailDto response = ProductDetailDto.builder()
+                .id(productToAdd.getId())
+                .name(productToAdd.getName())
+                .unitPrice(productToAdd.getUnitPrice())
+                .unitsInStock(productToAdd.getUnitsInStock())
+                .build();
+        return response;
     }
 }
