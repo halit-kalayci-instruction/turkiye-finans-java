@@ -4,3 +4,4 @@ package org.example;
 public interface StringFunction {
     String run(String str);
 }
+// 14:00
