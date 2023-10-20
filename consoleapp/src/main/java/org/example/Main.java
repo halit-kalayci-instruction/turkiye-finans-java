@@ -8,7 +8,7 @@ public class Main extends Thread{
         // Lambda Expression
         /*SampleThread sampleThread = new SampleThread();
         sampleThread.start();*/
-        Main thread = new Main();
+        /*Main thread = new Main();
         thread.start();
         System.out.println(amount);
         amount++;
@@ -18,7 +18,14 @@ public class Main extends Thread{
             System.out.println("Threadin bitmesi bekleniyor...");
         }
 
-        System.out.println(amount);
+        System.out.println(amount); */
+
+        for(int i=1; i<=3; i++){
+            SampleThread sampleThread = new SampleThread(i);
+            Thread thread = new Thread(sampleThread);
+            thread.start();
+        }
+
     }
 
     @Override
@@ -26,3 +33,4 @@ public class Main extends Thread{
         amount++;
     }
 }
+//
